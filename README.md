@@ -1,3 +1,9 @@
+
+
+<img width="596" height="725" alt="Screenshot 2026-08-25 at 11 45 24 PM" src="https://github.com/user-attachments/assets/f2a61280-ae27-4b89-bb7e-c3f152fb1703" />
+
+
+
 automation_framework/
 │
 ├── apps/
