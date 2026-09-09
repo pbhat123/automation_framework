@@ -1,0 +1,41 @@
+1. In conftest.py, add this new fixture
+
+@pytest.fixture
+def extra_screenshots(request):
+    request.node.extra_screenshots = []
+    return request.node.extra_screenshots
+
+
+
+
+
+
+
+
+
+2. In conftest.py, replace the screenshot block inside pytest_runtest_makereport with:
+
+        if web_driver:
+            screenshot_path = generate_screenshot_filename(app_name, test_name)
+            try:
+                web_driver.save_screenshot(screenshot_path)
+                from pytest_html import extras
+                extra = getattr(report, "extras", [])
+                all_paths = [screenshot_path] + list(getattr(item, "extra_screenshots", []))
+                for p in all_paths:
+                    extra.append(extras.image(os.path.abspath(p)))
+                report.extras = extra
+            except Exception as e:
+                print(f"Failed to capture screenshot: {e}")
+
+
+
+3. In your test file, replace extra with extra_screenshots everywhere:
+
+def test_FLOW_NAME(driver, actions, extra_screenshots):
+    ...
+    if not page3.is_displayed():
+        failures.append("Page 3: element not displayed after click")
+        screenshot_path = generate_screenshot_filename("terminator", "page3_click_failure")
+        driver.save_screenshot(screenshot_path)
+        extra_screenshots.append(screenshot_path)
