@@ -1,41 +1,31 @@
-1. In conftest.py, add this new fixture
+    # ---------------- PAGE 3 (soft assert / try-except) ----------------
+    try:
+        page3.wait_for_page_load()
+        page3.click()
+        if not page3.is_displayed():
+            failures.append("Page 3: element not displayed after click")
+            screenshot_path = generate_screenshot_filename("terminator", "page3_click_failure")
+            driver.save_screenshot(screenshot_path)
+            extra_screenshots.append(screenshot_path)
 
-@pytest.fixture
-def extra_screenshots(request):
-    request.node.extra_screenshots = []
-    return request.node.extra_screenshots
+        page3.select_dropdown_by_text("SOME_OPTION")
+        if page3.get_selected_dropdown_option() != "SOME_OPTION":
+            failures.append("Page 3: dropdown selection failed")
+            screenshot_path = generate_screenshot_filename("terminator", "page3_dropdown_failure")
+            driver.save_screenshot(screenshot_path)
+            extra_screenshots.append(screenshot_path)
 
-
-
-
-
-
-
-
-
-2. In conftest.py, replace the screenshot block inside pytest_runtest_makereport with:
-
-        if web_driver:
-            screenshot_path = generate_screenshot_filename(app_name, test_name)
-            try:
-                web_driver.save_screenshot(screenshot_path)
-                from pytest_html import extras
-                extra = getattr(report, "extras", [])
-                all_paths = [screenshot_path] + list(getattr(item, "extra_screenshots", []))
-                for p in all_paths:
-                    extra.append(extras.image(os.path.abspath(p)))
-                report.extras = extra
-            except Exception as e:
-                print(f"Failed to capture screenshot: {e}")
-
-
-
-3. In your test file, replace extra with extra_screenshots everywhere:
-
-def test_FLOW_NAME(driver, actions, extra_screenshots):
-    ...
-    if not page3.is_displayed():
-        failures.append("Page 3: element not displayed after click")
-        screenshot_path = generate_screenshot_filename("terminator", "page3_click_failure")
+    except Exception as e:
+        failures.append(f"Page 3 crashed: {e}")
+        screenshot_path = generate_screenshot_filename("terminator", "page3_crash")
         driver.save_screenshot(screenshot_path)
         extra_screenshots.append(screenshot_path)
+
+
+
+
+This requires:
+
+from core.utils import generate_screenshot_filename at the top of the test file
+extra_screenshots added as a parameter to your test function: def test_FLOW_NAME(driver, actions, extra_screenshots):
+The extra_screenshots fixture and updated pytest_runtest_makereport hook in conftest.py from my previous message
