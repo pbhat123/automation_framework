@@ -1,0 +1,35 @@
+Use the existing window-handling methods already in `base_actions.py`/`page_.py` (`get_all_window_handles`, `switch_to_window`, `close_current_window`). Pattern is the same for both tab and window — Selenium treats both as "window handles."
+
+```python
+# Remember the original window
+original_window = driver.current_window_handle
+
+# ---------------- LINK 1 (opens new tab) ----------------
+page.click()  # click link 1
+all_windows = page.get_all_window_handles()
+new_window = [w for w in all_windows if w != original_window][0]
+page.switch_to_window(new_window)
+
+page.wait_for_page_load()
+assert "EXPECTED_TEXT" in page.get_text(), "Text mismatch in new tab"
+
+page.close_current_window()
+page.switch_to_window(original_window)
+
+# ---------------- LINK 2 (opens new window) ----------------
+page.click()  # click link 2 (make sure locator points to link 2 now)
+all_windows = page.get_all_window_handles()
+new_window = [w for w in all_windows if w != original_window][0]
+page.switch_to_window(new_window)
+
+page.wait_for_page_load()
+assert "EXPECTED_TEXT" in page.get_text(), "Text mismatch in new window"
+
+page.close_current_window()
+page.switch_to_window(original_window)
+```
+
+Notes:
+- `driver.current_window_handle` — you'll need `driver` directly (already available in your test file), since this isn't wrapped in `base_actions.py`
+- Same logic works whether it's a tab or a separate OS window — Selenium doesn't distinguish
+- Make sure your `page_.py`'s locator for "click" points to the correct link before each click (Link 1 vs Link 2), or use two separate locator slots if both links exist on the same page simultaneously
