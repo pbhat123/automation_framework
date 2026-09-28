@@ -1,75 +1,23 @@
-Use the existing window-handling methods already in `base_actions.py`/`page_.py` (`get_all_window_handles`, `switch_to_window`, `close_current_window`). Pattern is the same for both tab and window — Selenium treats both as "window handles."
-
 ```python
-# Remember the original window
-original_window = driver.current_window_handle
+from selenium.webdriver.common.by import By
 
-# ---------------- LINK 1 (opens new tab) ----------------
-page.click()  # click link 1
-all_windows = page.get_all_window_handles()
-new_window = [w for w in all_windows if w != original_window][0]
-page.switch_to_window(new_window)
+# 1. Count occurrences BEFORE
+count_before = len(driver.find_elements(By.XPATH, "//*[text()='text123']"))
+print(f"Count before: {count_before}")
 
+# 2. Do the action / re-visit the page
+page.open_url(config.BASE_URL)   # or whatever navigation re-visits the page
 page.wait_for_page_load()
-assert "EXPECTED_TEXT" in page.get_text(), "Text mismatch in new tab"
 
-page.close_current_window()
-page.switch_to_window(original_window)
+# 3. Count occurrences AFTER
+count_after = len(driver.find_elements(By.XPATH, "//*[text()='text123']"))
+print(f"Count after: {count_after}")
 
-# ---------------- LINK 2 (opens new window) ----------------
-page.click()  # click link 2 (make sure locator points to link 2 now)
-all_windows = page.get_all_window_handles()
-new_window = [w for w in all_windows if w != original_window][0]
-page.switch_to_window(new_window)
-
-page.wait_for_page_load()
-assert "EXPECTED_TEXT" in page.get_text(), "Text mismatch in new window"
-
-page.close_current_window()
-page.switch_to_window(original_window)
+# 4. Assert it increased by exactly 1
+assert count_after == count_before + 1, f"Expected {count_before + 1}, got {count_after}"
 ```
 
-Notes:
-- `driver.current_window_handle` — you'll need `driver` directly (already available in your test file), since this isn't wrapped in `base_actions.py`
-- Same logic works whether it's a tab or a separate OS window — Selenium doesn't distinguish
-- Make sure your `page_.py`'s locator for "click" points to the correct link before each click (Link 1 vs Link 2), or use two separate locator slots if both links exist on the same page simultaneously
-
-
-
-
-++++++++++++++++++++++++
-
-
-You're right, let me be direct.
-
-**Your new `_page.py` file needs these methods** (copy from the generic template, keep only these, delete the rest):
-
-```python
-class YourNewPage:
-    def __init__(self, driver, actions):
-        self.driver = driver
-        self.actions = actions
-
-        self.ELEMENT_1_XPATH = ("xpath", "//xpath_for_text_to_verify")
-        self.ELEMENT_2_XPATH = ("xpath", "//xpath_for_the_link")
-
-    def click(self):
-        self.actions.click(self.ELEMENT_2_XPATH)
-
-    def get_text(self):
-        return self.actions.get_text(self.ELEMENT_1_XPATH)
-
-    def wait_for_page_load(self, timeout=10):
-        self.actions.wait_for_page_load(timeout)
-
-    def get_all_window_handles(self):
-        return self.actions.get_all_window_handles()
-
-    def switch_to_window(self, window_handle):
-        self.actions.switch_to_window(window_handle)
-
-    def close_current_window(self):
-        self.actions.close_current_window()
-```
-
-That's it. Fill in `ELEMENT_1_XPATH` (the text you'll verify) and `ELEMENT_2_XPATH` (the link you click) with real XPaths. Everything else (the actual clicking, switching, verifying, closing sequence) happens in your `test_.py` file, not here.
+- `find_elements` (plural) returns a list, so `len()` gives the count, and it returns 0 (no crash) if nothing matches.
+- Replace `'text123'` with your real text.
+- Use `//*[contains(text(),'text123')]` instead if the text is only part of a longer string.
+- If the page loads its list slowly (Angular), add a `time.sleep(2)` before each count so the elements have rendered.
