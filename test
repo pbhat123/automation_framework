@@ -21,3 +21,56 @@ assert count_after == count_before + 1, f"Expected {count_before + 1}, got {coun
 - Replace `'text123'` with your real text.
 - Use `//*[contains(text(),'text123')]` instead if the text is only part of a longer string.
 - If the page loads its list slowly (Angular), add a `time.sleep(2)` before each count so the elements have rendered.
+_________________________________________________________________________________
+
+**Page element (in your `_page.py`):** point the locator at the `<input type="file">` element, not the visible "Browse" or "Upload" button:
+
+```python
+self.ELEMENT_1_XPATH = ("xpath", "//input[@type='file']")
+```
+
+The template's `upload_file()` method uses `ELEMENT_1_XPATH`, so use that name for this locator. The input can be hidden and it still works. Don't click the Browse button first, because that opens a Windows dialog Selenium can't control.
+
+**Where to store the PDF:** create a `test_data` folder at your project root (next to `apps/` and `core/`) and put the file there:
+
+```
+lambo/
+├── test_data/
+│   └── sample.pdf
+```
+
+**Path in `terminator_config.py`:**
+```python
+import os
+UPLOAD_FILE_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "test_data", "sample.pdf"))
+```
+
+This builds the full path automatically, so it works on any machine and from any run method (Eclipse, cmd, or your `.bat` file). Selenium needs a full absolute path, and a relative path can fail depending on the working directory.
+
+**In your `test_.py`:**
+```python
+page.upload_file(config.UPLOAD_FILE_PATH)
+```
+
+If you'd rather keep it simple, you can hardcode the full path instead, like `"C:\\Users\\YourName\\Desktop\\lambo\\test_data\\sample.pdf"`, with double backslashes.
+
+
+___________________________________
+
+**Page element:**
+```python
+self.ELEMENT_1_XPATH = ("xpath", "//input[@type='file']")
+```
+(Target the `<input type="file">`, not the Browse button.)
+
+**PDF location:** `lambo/test_data/sample.pdf`
+
+**In `terminator_config.py`:**
+```python
+UPLOAD_FILE_PATH = "C:\\Users\\YourName\\Desktop\\lambo\\test_data\\sample.pdf"
+```
+
+**In `test_.py`:**
+```python
+page.upload_file(config.UPLOAD_FILE_PATH)
+```
