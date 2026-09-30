@@ -1,76 +1,29 @@
+**1. In your `_page.py`**
+
+Inside `__init__`:
 ```python
-from selenium.webdriver.common.by import By
-
-# 1. Count occurrences BEFORE
-count_before = len(driver.find_elements(By.XPATH, "//*[text()='text123']"))
-print(f"Count before: {count_before}")
-
-# 2. Do the action / re-visit the page
-page.open_url(config.BASE_URL)   # or whatever navigation re-visits the page
-page.wait_for_page_load()
-
-# 3. Count occurrences AFTER
-count_after = len(driver.find_elements(By.XPATH, "//*[text()='text123']"))
-print(f"Count after: {count_after}")
-
-# 4. Assert it increased by exactly 1
-assert count_after == count_before + 1, f"Expected {count_before + 1}, got {count_after}"
+self.IFRAME_XPATH = ("xpath", "//iframe")
+self.LINK_XPATH = ("xpath", "//a[contains(@href,'loadabcpage')]")
 ```
 
-- `find_elements` (plural) returns a list, so `len()` gives the count, and it returns 0 (no crash) if nothing matches.
-- Replace `'text123'` with your real text.
-- Use `//*[contains(text(),'text123')]` instead if the text is only part of a longer string.
-- If the page loads its list slowly (Angular), add a `time.sleep(2)` before each count so the elements have rendered.
-_________________________________________________________________________________
+Inside the class:
+```python
+def switch_to_frame(self):
+    self.actions.switch_to_frame(self.IFRAME_XPATH)
 
-**Page element (in your `_page.py`):** point the locator at the `<input type="file">` element, not the visible "Browse" or "Upload" button:
+def switch_to_default_content(self):
+    self.actions.switch_to_default_content()
+
+def click(self):
+    self.actions.click(self.LINK_XPATH)
+```
+
+**2. In your `test_.py`**
 
 ```python
-self.ELEMENT_1_XPATH = ("xpath", "//input[@type='file']")
+page.switch_to_frame()
+page.click()
+page.switch_to_default_content()
 ```
 
-The template's `upload_file()` method uses `ELEMENT_1_XPATH`, so use that name for this locator. The input can be hidden and it still works. Don't click the Browse button first, because that opens a Windows dialog Selenium can't control.
-
-**Where to store the PDF:** create a `test_data` folder at your project root (next to `apps/` and `core/`) and put the file there:
-
-```
-lambo/
-├── test_data/
-│   └── sample.pdf
-```
-
-**Path in `terminator_config.py`:**
-```python
-import os
-UPLOAD_FILE_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "test_data", "sample.pdf"))
-```
-
-This builds the full path automatically, so it works on any machine and from any run method (Eclipse, cmd, or your `.bat` file). Selenium needs a full absolute path, and a relative path can fail depending on the working directory.
-
-**In your `test_.py`:**
-```python
-page.upload_file(config.UPLOAD_FILE_PATH)
-```
-
-If you'd rather keep it simple, you can hardcode the full path instead, like `"C:\\Users\\YourName\\Desktop\\lambo\\test_data\\sample.pdf"`, with double backslashes.
-
-
-___________________________________
-
-**Page element:**
-```python
-self.ELEMENT_1_XPATH = ("xpath", "//input[@type='file']")
-```
-(Target the `<input type="file">`, not the Browse button.)
-
-**PDF location:** `lambo/test_data/sample.pdf`
-
-**In `terminator_config.py`:**
-```python
-UPLOAD_FILE_PATH = "C:\\Users\\YourName\\Desktop\\lambo\\test_data\\sample.pdf"
-```
-
-**In `test_.py`:**
-```python
-page.upload_file(config.UPLOAD_FILE_PATH)
-```
+That's the complete flow — switch into the iframe, click the link, switch back out.
