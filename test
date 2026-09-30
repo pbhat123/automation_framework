@@ -1,2 +1,16 @@
-driver.execute_script("arguments[0].dispatchEvent(new Event('change', { bubbles: true }));", element)
-driver.execute_script("arguments[0].dispatchEvent(new Event('blur', { bubbles: true }));", element)
+from selenium.common.exceptions import StaleElementReferenceException
+from selenium.webdriver.common.by import By
+import time
+
+value_to_enter = "your text here"
+
+for attempt in range(5):
+    try:
+        element = driver.find_element(By.XPATH, page.ELEMENT_1_XPATH[1])
+        element.clear()
+        element.send_keys(value_to_enter)
+        break
+    except StaleElementReferenceException:
+        time.sleep(1)
+else:
+    raise Exception("Failed to enter text after 5 attempts due to stale element")
