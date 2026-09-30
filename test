@@ -1,29 +1,9 @@
-**1. In your `_page.py`**
-
-Inside `__init__`:
 ```python
-self.IFRAME_XPATH = ("xpath", "//iframe")
-self.LINK_XPATH = ("xpath", "//a[contains(@href,'loadabcpage')]")
+from selenium.webdriver.common.by import By
+
+value_to_enter = "your text here"
+
+element = driver.find_element(By.XPATH, page.ELEMENT_1_XPATH[1])
+driver.execute_script("arguments[0].value = arguments[1];", element, value_to_enter)
+driver.execute_script("arguments[0].dispatchEvent(new Event('input', { bubbles: true }));", element)
 ```
-
-Inside the class:
-```python
-def switch_to_frame(self):
-    self.actions.switch_to_frame(self.IFRAME_XPATH)
-
-def switch_to_default_content(self):
-    self.actions.switch_to_default_content()
-
-def click(self):
-    self.actions.click(self.LINK_XPATH)
-```
-
-**2. In your `test_.py`**
-
-```python
-page.switch_to_frame()
-page.click()
-page.switch_to_default_content()
-```
-
-That's the complete flow — switch into the iframe, click the link, switch back out.
