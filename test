@@ -1,20 +1,46 @@
-**In `_page.py`** (inside `__init__`):
+A few likely reasons this fails even with a seemingly correct XPath:
+
+1. **Timing** — the popup may render slightly after page load; `page.click()` might fire before it's present.
+2. **The XPath is too rigid/literal** — if you copied the exact structure `<app><div><div><div><div><button>`, Angular often injects extra wrapper divs dynamically, so an exact-depth XPath can break easily.
+
+**Better approach — target the button by a stable attribute (id/class/text) instead of full DOM path:**
 ```python
-self.ELEMENT_1 = ("xpath", "(//*[@id='abc'])[1]")
-self.ELEMENT_3 = ("xpath", "(//*[@id='abc'])[3]")
+("xpath", "//button[text()='OK']")
+```
+or
+```python
+("xpath", "//button[@class='some-stable-class']")
 ```
 
-Add click methods:
-```python
-def click_element_1(self):
-    self.actions.click(self.ELEMENT_1)
+Can you share: what's the button's visible text, or any id/class it has? That'll let me give you an exact, more reliable locator.
 
-def click_element_3(self):
-    self.actions.click(self.ELEMENT_3)
+
+
+
+---
+
+
+If it's literally the 5th button with that exact class on the page, use index:
+
+```python
+("xpath", "(//button[@class='your_class_here'])[5]")
+```
+
+But since Angular popups often render **async**, also wrap this with a wait before clicking:
+
+**In `_page.py`:**
+```python
+self.POPUP_BUTTON_XPATH = ("xpath", "(//button[@class='your_class_here'])[5]")
+```
+```python
+def click_popup_button(self):
+    self.actions.wait_for_element_clickable(self.POPUP_BUTTON_XPATH, timeout=15)
+    self.actions.click(self.POPUP_BUTTON_XPATH)
 ```
 
 **In `test_.py`:**
 ```python
-page.click_element_1()
-page.click_element_3()
+page.click_popup_button()
 ```
+
+If it still fails, the popup might be inside an iframe or shadow DOM — let me know if this works first.
