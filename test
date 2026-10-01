@@ -1,16 +1,31 @@
-from selenium.common.exceptions import StaleElementReferenceException
+**1. In your `_page.py`** (inside `__init__`):
+```python
+self.ELEMENT_1_XPATH = ("xpath", "//table/tbody/tr[@class='R']")
+```
+
+No other page methods needed — this logic uses raw Selenium directly in the test file.
+
+**2. In your `test_.py`:**
+```python
 from selenium.webdriver.common.by import By
-import time
 
-value_to_enter = "your text here"
+# ---------------- BEFORE ----------------
+rows_before = driver.find_elements(By.XPATH, page.ELEMENT_1_XPATH[1])
+texts_before = [row.find_element(By.TAG_NAME, "td").text for row in rows_before]
+count_before = len(rows_before)
 
-for attempt in range(5):
-    try:
-        element = driver.find_element(By.XPATH, page.ELEMENT_1_XPATH[1])
-        element.clear()
-        element.send_keys(value_to_enter)
-        break
-    except StaleElementReferenceException:
-        time.sleep(1)
-else:
-    raise Exception("Failed to enter text after 5 attempts due to stale element")
+# ---------------- ACTION THAT ADDS A ROW ----------------
+# (your existing action/navigation steps go here)
+
+# ---------------- AFTER ----------------
+rows_after = driver.find_elements(By.XPATH, page.ELEMENT_1_XPATH[1])
+texts_after = [row.find_element(By.TAG_NAME, "td").text for row in rows_after]
+count_after = len(rows_after)
+
+# ---------------- VERIFY COUNT INCREASED ----------------
+assert count_after == count_before + 1, f"Expected {count_before + 1}, got {count_after}"
+
+# ---------------- FIND THE NEW ROW'S FIRST CELL VALUE ----------------
+new_values = [t for t in texts_after if t not in texts_before]
+print("New row value(s):", new_values)
+```
