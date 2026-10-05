@@ -1,8 +1,7 @@
-def scroll_popup_and_click_button_7_js(self):
+def click_second_popup_button_js(self):
     self.actions.execute_javascript("""
-    var btn = document.querySelectorAll('button')[7];
-    btn.scrollIntoView(true);
-    btn.click();
+    var popup = document.querySelector('div[class="popup-xyz"][role="dialog"]');
+    var buttons = popup.querySelectorAll('button');
+    buttons[1].scrollIntoView(true);
+    buttons[1].click();
     """)
-
-page.scroll_popup_and_click_button_7_js()
