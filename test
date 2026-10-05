@@ -1,9 +1,8 @@
-def get_button_details_js(self):
-    return self.actions.execute_javascript("""
-    var buttons = document.querySelectorAll('button');
-    var result = [];
-    for(let i = 0; i < buttons.length; i++) {
-        result.push(i + ': ' + buttons[i].textContent + ' | class: ' + buttons[i].className);
-    }
-    return result.join(' | ');
+def scroll_popup_and_click_button_7_js(self):
+    self.actions.execute_javascript("""
+    var btn = document.querySelectorAll('button')[7];
+    btn.scrollIntoView(true);
+    btn.click();
     """)
+
+page.scroll_popup_and_click_button_7_js()
