@@ -4,17 +4,19 @@ def __init__(self, driver, actions):
     self.driver = driver
     self.actions = actions
     self.P_SELECT_SPAN_XPATH = ("xpath", "//form//div//div//p-select//span[@class='span_class_name']")
+    self.LI_OPTION_1_ID = "option_1"
+    self.LI_OPTION_2_ID = "option_2"
+    self.LI_OPTION_3_ID = "option_3"
 
-def select_dropdown_option_by_aria(self, aria_id):
+def select_dropdown_option_by_li_id(self, li_id):
     self.actions.click(self.P_SELECT_SPAN_XPATH)
-    self.actions.wait_for_element_visible(("xpath", "//span[@aria-expanded='true']"))
-    option_xpath = ("xpath", f"//*[@id='{aria_id}']")
-    self.actions.click(option_xpath)
+    self.actions.wait_for_element_visible(("xpath", f"//li[@id='{li_id}']"))
+    self.actions.click(("xpath", f"//li[@id='{li_id}']"))
 ```
 
 **In your test:**
 ```python
-page.select_dropdown_option_by_aria("aria_id_value_here")
+page.select_dropdown_option_by_li_id(page.LI_OPTION_1_ID)
 ```
 
-Replace `span_class_name` with the actual class and `aria_id_value_here` with the aria-activedescendant value you want to select.
+Replace `option_1`, `option_2`, etc. with your actual li id values.
