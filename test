@@ -1,7 +1,20 @@
-def click_second_popup_button_js(self):
-    self.actions.execute_javascript("""
-    var popup = document.querySelector('div[class="popup-xyz"][role="dialog"]');
-    var buttons = popup.querySelectorAll('button');
-    buttons[1].scrollIntoView(true);
-    buttons[1].click();
-    """)
+**In your page file:**
+```python
+def __init__(self, driver, actions):
+    self.driver = driver
+    self.actions = actions
+    self.P_SELECT_SPAN_XPATH = ("xpath", "//form//div//div//p-select//span[@class='span_class_name']")
+
+def select_dropdown_option_by_aria(self, aria_id):
+    self.actions.click(self.P_SELECT_SPAN_XPATH)
+    self.actions.wait_for_element_visible(("xpath", "//span[@aria-expanded='true']"))
+    option_xpath = ("xpath", f"//*[@id='{aria_id}']")
+    self.actions.click(option_xpath)
+```
+
+**In your test:**
+```python
+page.select_dropdown_option_by_aria("aria_id_value_here")
+```
+
+Replace `span_class_name` with the actual class and `aria_id_value_here` with the aria-activedescendant value you want to select.
