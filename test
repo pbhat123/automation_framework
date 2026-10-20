@@ -1,20 +1,19 @@
-**In your page file:**
-```python
-def __init__(self, driver, actions):
-    self.driver = driver
-    self.actions = actions
-    self.P_SELECT_SPAN_XPATH = ("xpath", "//form//div//div//p-select//span[@class='span_class_name']")
-    self.DROPDOWN_OPTION_XPATH = ("xpath", "//div[@class='p-dropdown-items-wrapper']//ul//li[@class='p-dropdown-item'][contains(text(), 'option_text_here')]")
+Relevant AI skills and experience
 
-def select_dropdown_option_by_text(self):
-    self.actions.click(self.P_SELECT_SPAN_XPATH)
-    self.actions.wait_for_element_clickable(self.DROPDOWN_OPTION_XPATH)
-    self.actions.click(self.DROPDOWN_OPTION_XPATH)
-```
+I have hands-on experience designing, building and evaluating production-style generative AI systems, most recently the SmartDesk AI Helpdesk project: a multi-agent IT and HR help desk that answers policy questions from a knowledge base, creates and tracks support tickets with human approval, and escalates when it doesn’t know the answer. On its final evaluation it answered 98.1% of knowledge-base questions with citations, correctly escalated 100% of questions it couldn’t answer (0% hallucinated answers), had zero PII leaks or policy breaches across a red-team safety set, and handled multi-part IT+HR questions correctly 14 of 14 times, at roughly $0.002 per task. It is backed by about 2,800 automated tests.
 
-**In your test:**
-```python
-page.select_dropdown_option_by_text()
-```
+Models and platforms: OpenAI (GPT-3.x through GPT-5.x, including gpt-5.4-mini and gpt-4o-mini, Sol, Luna, Terra, embedding models, the moderation API, reasoning-effort tuning) and Anthropic Claude (Haiku, Sonnet, Opus, Fable), plus Hugging Face models run locally.
 
-Replace the classes/text with your actual values.
+Tooling: Python 3.12, uv, Homebrew, VS Code, PyCharm, Git and GitHub (Issues, REST API, fine-grained tokens), Claude Code (plan mode, hooks, custom skills, CLAUDE.md), Streamlit, Redis, SQLite, ChromaDB, Playwright, pytest, pre-commit hooks.
+
+Retrieval-augmented generation (RAG): document chunking, vector embeddings (text-embedding-3-small), dense vector search (ChromaDB), sparse keyword search (BM25), hybrid retrieval with Reciprocal Rank Fusion, cross-encoder re-ranking (bge-reranker), confidence-threshold escalation, citation grounding, and retrieval ablations (hit@k, MRR) on both paraphrased and exact-term test sets.
+
+Agentic AI: LangGraph and LangChain; graph engineering (state graphs, conditional routing, parallel fan-out and join); an orchestrator-worker multi-agent design (orchestrator, IT and HR workers, synthesizer, ticket agent); intent classification and query decomposition; tool calling with least-privilege tool scoping; human-in-the-loop approval gates; state and checkpointing; short-term memory with compaction plus long-term cross-session memory using privacy-preserving hashed keys.
+
+Guardrails and responsible AI: PII detection and masking (Microsoft Presidio, spaCy), toxicity and content moderation, prompt-injection detection, self-harm safe responses, output guards, an LLM-as-judge grounding check plus a deterministic fact check, quarantining of untrusted content, and masked observability data.
+
+Evaluation (evals): golden, gap (unanswerable), red-team safety, routing and compound-question test sets; Ragas metrics (faithfulness, answer relevancy, context precision and recall, hallucination rate); escalation precision and recall; threshold sweeps; drift monitoring; golden-snapshot regression testing; model right-sizing comparisons; eval-contamination guards; and root-cause triage of failures.
+
+LLMOps and cost control: cost monitoring with a persistent spend ledger, budget cut-offs, rate limiting, model tiering, retries, fallbacks and timeouts, degraded-mode handling, exact and semantic caching (Redis with in-memory fallback), tracing and observability (Langfuse, LangSmith), monitoring dashboards (cost by agent, approval-gate counters, component health), and crash-safe, idempotent tool actions.
+
+Engineering practices: prompt engineering with versioned prompts, context engineering, loop engineering, harness engineering, spec-driven development (spec, plan, tasks), test-first development, end-to-end smoke testing, and AI-assisted development with coding agents, including writing reusable skills that encode team workflows.
