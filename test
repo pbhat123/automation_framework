@@ -17,3 +17,13 @@ Evaluation (evals): golden, gap (unanswerable), red-team safety, routing and com
 LLMOps and cost control: cost monitoring with a persistent spend ledger, budget cut-offs, rate limiting, model tiering, retries, fallbacks and timeouts, degraded-mode handling, exact and semantic caching (Redis with in-memory fallback), tracing and observability (Langfuse, LangSmith), monitoring dashboards (cost by agent, approval-gate counters, component health), and crash-safe, idempotent tool actions.
 
 Engineering practices: prompt engineering with versioned prompts, context engineering, loop engineering, harness engineering, spec-driven development (spec, plan, tasks), test-first development, end-to-end smoke testing, and AI-assisted development with coding agents, including writing reusable skills that encode team workflows.
+
+
+Certified AI-Empowered SAFe Agilist (SA)
+Certified AI-Empowered SAFe Product Manager / Product Owner (POPM)
+ITIL 4 Foundation
+AWS Certified Cloud Practitioner
+AWS Certified AI Practitioner
+ISTQB Certified Tester Foundation Level (CTFL)
+Tricentis NeoLoad Professional
+Google AI Professional Certificate
